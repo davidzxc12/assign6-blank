@@ -9,10 +9,38 @@
   <link rel="stylesheet" href="css/css.css">
 
   <!--引入初始化 Parse 的 js 檔案-->
-  <script type="text/javascript" src="<!--引入初始化 Parse 的 js 檔案-->"></script>
+  <script type="text/javascript" src="js/key.js"></script>
   <script  type="text/javascript">
     $(document).ready(function(){
+      var currentUser=Parse.User.current();
       console.log('document ready');
+      if(!currentUser){
+        alert("尚未登入");
+        window.location='logIn.html';
+        return null;
+      }
+      else if(currentUser.get("role")!="teacher"){
+        alert("非老師身分無法瀏覽此頁面");
+        window.location='index.html';
+        return null;
+      }
+      var Attend=Parse.Object.extend("Attend");
+      var query=new Parse.Query(Attend);
+      query.equalTo("role","student");
+      query.find({
+        success:function(Array){
+          console.log('query',Array);
+          for(var i=0;i<Array.length;i++){
+            var html='<tr><td>'+Array[i].get('username')+'</tr></td>';
+            $("#table").append(html);
+          }
+        },
+        error:function(error){
+          alert(error.message);
+        }
+      });
+
+
       /* 要判斷使用者角色，避免不應該看到的人進到此頁面 */
         // 提示 1 : 將非老師的角色轉址到 index 頁面
         // 提示 2 : 將未登入的使用者轉指導 logIn 頁面

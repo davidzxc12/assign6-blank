@@ -5,14 +5,39 @@
   <meta name="viewport" content="width=device-width">
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+  <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/css.css">
 
+
   <!--引入初始化 Parse 的 js 檔案-->
-  <script type="text/javascript" src="<!--引入初始化 Parse 的 js 檔案-->"></script>
+  <script type="text/javascript" src="js/key.js"></script>
   <script  type="text/javascript">
     $(document).on('submit','#signUpForm',function(e){
+
+      e.preventDefault();
       console.log('signUp submit');
+      var user = new Parse.User();
+      user.set("username",$('#username').prop("value"));
+      user.set("password",$('#password').prop("value"));
+      user.set("email",$('#email').prop("value"));
+      if($("#-0").prop("checked"))
+        user.set("role","teacher");
+      else if($("#-1").prop("checked"))
+        user.set("role","student");
+
+      user.signUp(null,{
+        success:function(user){
+          console.log("user",user);
+          alert("註冊成功,即將進入首頁");
+          window.location='index.html';
+          return null;
+        },
+        error:function(user,error){
+          alert(error.message);
+        }
+      })
+
       /* 請閱讀完 html 後在這裡填入送出表單後需要執行的程式碼 */
         // 提示1 : 記得使用 preventDefault 方程 避免表單轉址
 
@@ -43,7 +68,7 @@
       <div class="form-group">
         <label class="col-md-4 control-label" for="email">email*</label>
         <div class="col-md-4">
-        <input id="email" name="email" type="text" placeholder="email" class="form-control input-md" required="">
+        <input id="email" name="email" type="email" placeholder="email" class="form-control input-md" required="">
 
         </div>
       </div>
